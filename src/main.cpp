@@ -3,6 +3,7 @@
 #include "main.h"
 #include "enemies.h"
 #include "bullets.h"
+#include "stars.h"
 
 #define LED_PIN 7
 #define BUTTON_YELLOW 1
@@ -56,8 +57,8 @@ int getRanDelay(TimerState *timers) {
   float t = (millis() - timers->gameStartTime) / 1000.0;
 
   float baseDelay = 2200.0 / pow(1.01, t);
-  float wave = 400.0 * sin(t * 0.4);
-  int jitter = random(-150, 151);
+  float wave = 200.0 * sin(t * 0.1);
+  int jitter = random(-50, 150);
 
   int delay = (int)(baseDelay + wave + jitter);
 
@@ -158,13 +159,16 @@ void loop() {
     player.lastButtonState = currentButtonState;
 
     updateBullets(&bullets);
+    updateStars(&timers);
     handleSpawn(&enemies, &timers);
     updateEnemies(&enemies);
     checkElimination(&bullets, &enemies);
 
+    drawStars();
     drawPlayer(player.x);
     drawBullets(&bullets);
     drawEnemies(&enemies);
+    
 
     u8g2.sendBuffer();
   }

@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include "enemies.h"
+#define baseSpeed 1.0
 
 float getEnemySpeed(TimerState *timers) {
   float t = (millis() - timers->gameStartTime) / 1000.0;
-  float speed = 1.0 + pow(1.005, t);
-
+  float k = 0.152; //Skalierung
+  float speed = baseSpeed * pow(1.01, k * t);
   if (speed > 8.0) speed = 8.0;
 
   return speed;
