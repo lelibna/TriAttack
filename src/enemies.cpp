@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "enemies.h"
+#include "healthbar.h"
 #define baseSpeed 1.0
 
 float getEnemySpeed(TimerState *timers) {
@@ -43,7 +44,7 @@ void addEnemy(EnemyState *enemies, Enemy *e) {
   e->prev = current;
 }
 
-void updateEnemies(EnemyState *enemies) {
+void updateEnemies(EnemyState *enemies, HealthState *health) {
   Enemy *curr = enemies->head;
 
   while (curr != NULL) {
@@ -52,6 +53,7 @@ void updateEnemies(EnemyState *enemies) {
     curr->y += curr->speed;
 
     if (curr->y > 63) {
+      updateHealth(health);
       deleteEnemy(enemies, curr);
     }
 

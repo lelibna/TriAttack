@@ -4,8 +4,9 @@
 #include "enemies.h"
 #include "bullets.h"
 #include "stars.h"
+#include "sound.h"
+#include "healthbar.h"
 
-#define LED_PIN 7
 #define BUTTON_YELLOW 1
 #define POTENTIOMETER 3
 #define BUZZER 10
@@ -19,12 +20,21 @@ U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2(
   4   // OLED_RES
 );
 
+static HealthState health = {
+  10, // hp
+  10, // maxHp
+  7,  // dataPin
+  0,  // clockPin
+  2   // latchPin
+};
+
 const int frameDelay = 30;
 
 static BulletState bullets;
 static EnemyState enemies;
 static TimerState timers;
 static PlayerState player;
+static SoundState sound;
 
 int readADC() {
   return analogRead(POTENTIOMETER);
@@ -54,21 +64,21 @@ void startGameTimer(TimerState *timers) {
 }
 
 int getRanDelay(TimerState *timers) {
-  float t = (millis() - timers->gameStartTime) / 1000.0;
+  float t = (millis() - timers->gameStartTime) / 1000.0; 
 
-  float baseDelay = 2200.0 / pow(1.01, t);
-  float wave = 200.0 * sin(t * 0.1);
-  int jitter = random(-50, 150);
+  float baseDelay = 1500 * exp((-0.002)*t);
+  float wave = 100.0 * sin(t * 0.1);
+  int jitter = random(-50, 50);
 
-  int delay = (int)(baseDelay + wave + jitter);
+  int delay = (int)(baseDelay + wave + jitter + 600);
 
-  if (delay < 250) delay = 250;
-  if (delay > 3000) delay = 3000;
+  if (delay < 500) delay = 500;
+  if (delay > 2500) delay = 2500;
 
   return delay;
 }
 
-void checkElimination(BulletState *bullets, EnemyState *enemies) {
+void checkElimination(BulletState *bullets, EnemyState *enemies, HealthState *health) {
   Enemy *e = enemies->head;
 
   while (e != NULL) {
@@ -83,6 +93,7 @@ void checkElimination(BulletState *bullets, EnemyState *enemies) {
       int dy = b->y - (int)e->y;
 
       if (abs(dx) <= 3 && abs(dy) <= 3) {
+        startHitSound(&sound);
         deleteBullet(bullets, b);
         deleteEnemy(enemies, e);
         break;
@@ -119,16 +130,23 @@ void initPlayer(PlayerState *player) {
 void setup() {
   Serial.begin(115200);
 
-  pinMode(LED_PIN, OUTPUT);
   pinMode(BUTTON_YELLOW, INPUT_PULLUP);
   pinMode(BUZZER, OUTPUT);
-
-  digitalWrite(LED_PIN, HIGH);
+  pinMode(health.dataPin, OUTPUT);
+  pinMode(health.clockPin, OUTPUT);
+  pinMode(health.latchPin, OUTPUT);
+  digitalWrite(health.dataPin, LOW);
+  digitalWrite(health.clockPin, LOW);
+  digitalWrite(health.latchPin, LOW);
+  clearHealthBar(&health);
 
   initBullets(&bullets);
   initEnemies(&enemies);
   initTimers(&timers);
   initPlayer(&player);
+  initSound(&sound, BUZZER);
+  health.hp = health.maxHp;
+  showHealthBar(&health);
 
   randomSeed(analogRead(POTENTIOMETER));
 
@@ -161,13 +179,15 @@ void loop() {
     updateBullets(&bullets);
     updateStars(&timers);
     handleSpawn(&enemies, &timers);
-    updateEnemies(&enemies);
-    checkElimination(&bullets, &enemies);
+    updateEnemies(&enemies, &health);
+    checkElimination(&bullets, &enemies, &health);
+    updateSound(&sound);
 
     drawStars();
     drawPlayer(player.x);
     drawBullets(&bullets);
     drawEnemies(&enemies);
+    showHealthBar(&health);
     
 
     u8g2.sendBuffer();

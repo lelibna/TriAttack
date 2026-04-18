@@ -40,6 +40,14 @@ typedef struct {
   bool lastButtonState;
 } PlayerState;
 
+typedef struct HealthState{
+    int hp;
+    int maxHp;
+    int dataPin;
+    int clockPin;
+    int latchPin;
+} HealthState;
+
 extern U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2;
 
 extern const int frameDelay;
@@ -51,7 +59,7 @@ void drawPlayer(int x);
 void startGameTimer(TimerState *timers);
 int getRanDelay(TimerState *timers);
 
-void checkElimination(BulletState *bullets, EnemyState *enemies);
+void checkElimination(BulletState *bullets, EnemyState *enemies, HealthState *health);
 
 void initBullets(BulletState *bullets);
 void initEnemies(EnemyState *enemies);
