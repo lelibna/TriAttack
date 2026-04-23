@@ -6,10 +6,11 @@
 #include "stars.h"
 #include "sound.h"
 #include "healthbar.h"
+#include "player.h"
+#include "game.h"
 
-#define BUTTON_YELLOW 1
-#define POTENTIOMETER 3
-#define BUZZER 10
+//TODO Linked list entfernen?
+
 
 U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2(
   U8G2_R0,
@@ -35,29 +36,13 @@ static EnemyState enemies;
 static TimerState timers;
 static PlayerState player;
 static SoundState sound;
+static ScoreState score;
+static GameState state = GS_PLAYING;
 
 int readADC() {
   return analogRead(POTENTIOMETER);
 }
 
-void getPos(PlayerState *player) {
-  int diff = player->targetX - player->x;
-
-  if (abs(diff) > 1) {
-    int speed = abs(diff) / 5 + 1;
-
-    if (diff > 0) {
-      player->x += speed;
-    } else {
-      player->x -= speed;
-    }
-  }
-}
-
-void drawPlayer(int x) {
-  int ground = 63;
-  u8g2.drawTriangle(x - 5, ground, x + 5, ground, x, ground - 5);
-}
 
 void startGameTimer(TimerState *timers) {
   timers->gameStartTime = millis();
@@ -78,34 +63,6 @@ int getRanDelay(TimerState *timers) {
   return delay;
 }
 
-void checkElimination(BulletState *bullets, EnemyState *enemies, HealthState *health) {
-  Enemy *e = enemies->head;
-
-  while (e != NULL) {
-    Enemy *nextEnemy = e->next;
-
-    Bullet *b = bullets->head;
-
-    while (b != NULL) {
-      Bullet *nextBullet = b->next;
-
-      int dx = b->x - (int)e->x;
-      int dy = b->y - (int)e->y;
-
-      if (abs(dx) <= 3 && abs(dy) <= 3) {
-        startHitSound(&sound);
-        deleteBullet(bullets, b);
-        deleteEnemy(enemies, e);
-        break;
-      }
-
-      b = nextBullet;
-    }
-
-    e = nextEnemy;
-  }
-}
-
 void initBullets(BulletState *bullets) {
   bullets->head = NULL;
 }
@@ -121,11 +78,6 @@ void initTimers(TimerState *timers) {
   timers->lastFrameTime = 0;
 }
 
-void initPlayer(PlayerState *player) {
-  player->x = 64;
-  player->targetX = 64;
-  player->lastButtonState = HIGH;
-}
 
 void setup() {
   Serial.begin(115200);
@@ -162,25 +114,31 @@ void loop() {
   if (currentTime - timers.lastFrameTime >= frameDelay) {
     timers.lastFrameTime = currentTime;
 
+    if(state == GS_GAMEOVER){
+        u8g2.drawStr(30,30,"GAME OVER");
+        u8g2.sendBuffer();
+        return;
+    }
+
     u8g2.clearBuffer();
 
     int rawPos = readADC();
-    rawPos = constrain(rawPos, 800, 3200);
-    player.targetX = map(rawPos, 800, 3200, 5, 122);
+    rawPos = constrain(rawPos, POT_MIN, POT_MAX);
+    player.targetX = map(rawPos, POT_MIN, POT_MAX, PLAYER_MIN_X, PLAYER_MAX_X);
 
     getPos(&player);
 
     bool currentButtonState = digitalRead(BUTTON_YELLOW);
     if (player.lastButtonState == HIGH && currentButtonState == LOW) {
-      shootBullet(&bullets, player.x, 58);
+      shootBullet(&bullets, player.x, PLAYER_Y);
     }
     player.lastButtonState = currentButtonState;
 
     updateBullets(&bullets);
-    updateStars(&timers);
+    updateStars(getEnemySpeed(&timers));
     handleSpawn(&enemies, &timers);
-    updateEnemies(&enemies, &health);
-    checkElimination(&bullets, &enemies, &health);
+    updateEnemies(&enemies, &health, &state);
+    checkElimination(&bullets, &enemies, &health, &sound, &score);
     updateSound(&sound);
 
     drawStars();

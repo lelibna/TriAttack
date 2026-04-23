@@ -3,8 +3,16 @@
 
 #include "main.h"
 
+typedef struct HealthState{
+    int hp;
+    int maxHp;
+    int dataPin;
+    int clockPin;
+    int latchPin;
+} HealthState;
+
 void showHealthBar(HealthState *health);
-void updateHealth(HealthState *health);
+void updateHealth(HealthState *health, GameState *state);
 void clearHealthBar(HealthState *health);
 
 #endif

@@ -4,28 +4,23 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
 
-typedef struct Bullet {
-  int x;
-  int y;
-  struct Bullet *next;
-  struct Bullet *prev;
-} Bullet;
+#define BUTTON_YELLOW 1
+#define POTENTIOMETER 3
+#define BUZZER 10
+#define SCREEN_WIDTH   128
+#define SCREEN_HEIGHT   64
+#define POT_MIN        800
+#define POT_MAX       3200
+#define PLAYER_MIN_X    5
+#define PLAYER_MAX_X  122
+#define PLAYER_Y       58
 
-typedef struct Enemy {
-  float x;
-  float y;
-  float speed;
-  struct Enemy *next;
-  struct Enemy *prev;
-} Enemy;
+typedef enum {
+  GS_PLAYING,
+  GS_GAMEOVER,
+  GS_TITLESCREEN,
+} GameState;
 
-typedef struct {
-  Bullet *head;
-} BulletState;
-
-typedef struct {
-  Enemy *head;
-} EnemyState;
 
 typedef struct {
   unsigned long gameStartTime;
@@ -35,35 +30,16 @@ typedef struct {
 } TimerState;
 
 typedef struct {
-  int x;
-  int targetX;
-  bool lastButtonState;
-} PlayerState;
-
-typedef struct HealthState{
-    int hp;
-    int maxHp;
-    int dataPin;
-    int clockPin;
-    int latchPin;
-} HealthState;
+  unsigned long score;
+  unsigned long highScore;
+} ScoreState;
 
 extern U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2;
 
-extern const int frameDelay;
-
 int readADC();
-void getPos(PlayerState *player);
-void drawPlayer(int x);
 
 void startGameTimer(TimerState *timers);
 int getRanDelay(TimerState *timers);
-
-void checkElimination(BulletState *bullets, EnemyState *enemies, HealthState *health);
-
-void initBullets(BulletState *bullets);
-void initEnemies(EnemyState *enemies);
 void initTimers(TimerState *timers);
-void initPlayer(PlayerState *player);
 
 #endif

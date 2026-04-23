@@ -1,5 +1,4 @@
 #include "stars.h"
-#include "enemies.h"
 
 static Star stars[MAX_STARS] = {
     {5,2}, {20,10}, {40, 30}, {60, 5},
@@ -7,9 +6,9 @@ static Star stars[MAX_STARS] = {
     {10, 20}, {30, 55}, {50, 25}, {70, 45}
 };
 
-void updateStars(TimerState *timers){
+void updateStars(float speed){
     for(int i = 0; i < MAX_STARS; i++){
-        stars[i].y += getEnemySpeed(timers) * 0.2;
+        stars[i].y += speed * 0.2;
 
         if(stars[i].y > 63){
             stars[i].y = -5;
