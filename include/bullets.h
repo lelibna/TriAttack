@@ -1,22 +1,20 @@
 #ifndef BULLETS_H
 #define BULLETS_H
 #include "main.h"
+#define MAX_BULLETS 5
 
 typedef struct Bullet {
   int x;
   int y;
-  struct Bullet *next;
-  struct Bullet *prev;
+  bool active;
 } Bullet;
 
 typedef struct {
-  Bullet *head;
+  Bullet bulletpool[MAX_BULLETS];
 } BulletState;
 
 void initBullets(BulletState *bullets);
 void shootBullet(BulletState *bullets, int startX, int startY);
-void addBullet(BulletState *bullets, Bullet *b);
-void deleteBullet(BulletState *bullets, Bullet *b);
 void updateBullets(BulletState *bullets);
 void drawBullets(BulletState *bullets);
 

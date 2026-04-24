@@ -8,5 +8,4 @@
 
 void checkElimination(BulletState *bullets, EnemyState *enemies, HealthState *health, SoundState *sound, ScoreState *score);
 
-
 #endif

@@ -1,30 +1,23 @@
 #include "game.h"
+#include "main.h"
 
 void checkElimination(BulletState *bullets, EnemyState *enemies, HealthState *health, SoundState *sound, ScoreState *score) {
-  Enemy *e = enemies->head;
+  for (int i = 0; i < MAX_ENEMIES; i++) {
+    if (!enemies->enemypool[i].active) continue;
 
-  while (e != NULL) {
-    Enemy *nextEnemy = e->next;
+    for (int j = 0; j < MAX_BULLETS; j++) {
+      if (!bullets->bulletpool[j].active) continue;
 
-    Bullet *b = bullets->head;
-
-    while (b != NULL) {
-      Bullet *nextBullet = b->next;
-
-      int dx = b->x - (int)e->x;
-      int dy = b->y - (int)e->y;
+      int dx = bullets->bulletpool[j].x - (int)enemies->enemypool[i].x;
+      int dy = bullets->bulletpool[j].y - (int)enemies->enemypool[i].y;
 
       if (abs(dx) <= 3 && abs(dy) <= 3) {
         startHitSound(sound);
-        deleteBullet(bullets, b);
-        deleteEnemy(enemies, e);
-        score++;
+        bullets->bulletpool[j].active = false;
+        enemies->enemypool[i].active = false;
+        score->score++;
         break;
       }
-
-      b = nextBullet;
     }
-
-    e = nextEnemy;
   }
 }

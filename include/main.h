@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
 
-#define BUTTON_YELLOW 1
+#define BUTTON 1
 #define POTENTIOMETER 3
 #define BUZZER 10
 #define SCREEN_WIDTH   128
@@ -19,8 +19,17 @@ typedef enum {
   GS_PLAYING,
   GS_GAMEOVER,
   GS_TITLESCREEN,
+  GS_MENU
 } GameState;
 
+typedef void (*StateUpdateFn)();
+typedef void (*StateDrawFn)();
+
+typedef struct {
+  GameState id;
+  StateUpdateFn update;
+  StateDrawFn   draw;
+} StateHandler;
 
 typedef struct {
   unsigned long gameStartTime;
@@ -38,8 +47,11 @@ extern U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2;
 
 int readADC();
 
-void startGameTimer(TimerState *timers);
 int getRanDelay(TimerState *timers);
 void initTimers(TimerState *timers);
+void setState(GameState newState);
+void playing_update();
+void playing_draw();
+void startGameTimer(TimerState *timers);
 
 #endif
