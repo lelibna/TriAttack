@@ -10,14 +10,23 @@
 #include "game.h"
 #include "titlescreen.h"
 #include "gameover.h"
+#include "menu.h"
+#include "credits.h"
 
 static const StateHandler stateHandlers[] = {
   { GS_TITLESCREEN, titlescreen_update, titlescreen_draw },
+  { GS_MENU,        menu_update,        menu_draw        },
+  //{ GS_HIGHSCORES,  highscores_update,  highscores_draw  },
   { GS_PLAYING,     playing_update,     playing_draw     },
   { GS_GAMEOVER,    gameover_update,    gameover_draw    },
+  { GS_CREDITS,     credits_update,     credits_draw}
 };
 
 static GameState state = GS_TITLESCREEN;
+
+static unsigned long stateEntryTime = 0;
+
+const int numStates = sizeof(stateHandlers) / sizeof(stateHandlers[0]);
 
 U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2(
   U8G2_R0,
@@ -85,6 +94,7 @@ void initTimers(TimerState *timers) {
 }
 
 void setState(GameState newState){
+  stateEntryTime = millis();
   if(newState == GS_PLAYING){
     initBullets(&bullets);
     initEnemies(&enemies);
@@ -99,11 +109,16 @@ void setState(GameState newState){
   state = newState;
 }
 
+bool isButtonBlocked(){
+  return (millis() - stateEntryTime) < STATE_ENTRY_BLOCK_MS;
+}
+
 void startGameTimer(TimerState *timers) {
   timers->gameStartTime = millis();
 }
 
 void playing_update() {
+  if (isButtonBlocked()) return;
   int rawPos = constrain(readADC(), POT_MIN, POT_MAX);
   player.targetX = map(rawPos, POT_MIN, POT_MAX, PLAYER_MIN_X, PLAYER_MAX_X);
   getPos(&player);
@@ -156,7 +171,7 @@ void loop() {
 
     u8g2.clearBuffer();
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < numStates; i++) {
     if (stateHandlers[i].id == state) {
       stateHandlers[i].update();
       stateHandlers[i].draw();

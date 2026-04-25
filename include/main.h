@@ -14,12 +14,15 @@
 #define PLAYER_MIN_X    5
 #define PLAYER_MAX_X  122
 #define PLAYER_Y       58
+#define STATE_ENTRY_BLOCK_MS 600
 
 typedef enum {
   GS_PLAYING,
   GS_GAMEOVER,
   GS_TITLESCREEN,
-  GS_MENU
+  GS_MENU,
+  GS_HIGHSCORES,
+  GS_CREDITS
 } GameState;
 
 typedef void (*StateUpdateFn)();
@@ -48,6 +51,7 @@ extern U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2;
 int readADC();
 
 int getRanDelay(TimerState *timers);
+bool isButtonBlocked();
 void initTimers(TimerState *timers);
 void setState(GameState newState);
 void playing_update();
