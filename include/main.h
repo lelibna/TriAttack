@@ -15,6 +15,8 @@
 #define PLAYER_MAX_X  122
 #define PLAYER_Y       58
 #define STATE_ENTRY_BLOCK_MS 600
+#define LONG_PRESS 800
+#define PLAYERCOUNT 3
 
 typedef enum {
   GS_PLAYING,
@@ -22,7 +24,8 @@ typedef enum {
   GS_TITLESCREEN,
   GS_MENU,
   GS_HIGHSCORES,
-  GS_CREDITS
+  GS_CREDITS,
+  GS_PLAYERSELECT
 } GameState;
 
 typedef void (*StateUpdateFn)();
@@ -43,7 +46,6 @@ typedef struct {
 
 typedef struct {
   unsigned long score;
-  unsigned long highScore;
 } ScoreState;
 
 extern U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2;
@@ -57,5 +59,6 @@ void setState(GameState newState);
 void playing_update();
 void playing_draw();
 void startGameTimer(TimerState *timers);
+int getLastScore();
 
 #endif

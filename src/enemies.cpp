@@ -32,7 +32,7 @@ void updateEnemies(EnemyState *enemies, HealthState *health, GameState *state) {
     if(!enemies->enemypool[i].active) continue;
     enemies->enemypool[i].y += enemies->enemypool[i].speed;
     if(enemies->enemypool[i].y > SCREEN_HEIGHT){
-      updateHealth(health, state);
+      updateHealth(health);
       enemies->enemypool[i].active = false;
     }
   }

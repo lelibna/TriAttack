@@ -1,8 +1,6 @@
 #include "main.h"
 #include "menu.h"
 
-#define LONG_PRESS 800
-
 static menu_items currentItem = M_PLAY;
 
 static bool buttonwaspressed = false;
@@ -10,7 +8,7 @@ static uint32_t pressstarttime = 0;
 static bool longppresshandled = false;
 
 static const MenuHandler menuhandler[] = {
-    {GS_PLAYING,    M_PLAY},
+    {GS_PLAYERSELECT,    M_PLAY},
     {GS_HIGHSCORES, M_HIGHSCORES},
     {GS_CREDITS,    M_CREDITS}
 }; 
@@ -49,6 +47,13 @@ void menu_draw() {
     u8g2.drawStr(10, 32, currentItem == M_PLAY ? "> Play" : "  Play");
     u8g2.drawStr(10, 44, currentItem == M_HIGHSCORES ? "> Highscores" : "  Highscores");
     u8g2.drawStr(10, 56, currentItem == M_CREDITS ? "> Credits" : "  Credits");
+    /* TODO ZUR FOR SCHLEIFE ÄNDERN
+    for (int i = 0; i < M_COUNT; i++) {
+        char buf[20];
+        snprintf(buf, sizeof(buf), "%s%s", i == currentItem ? "> " : "  ", profileNames[i]);
+        u8g2.drawStr(10, 26 + i * 13, buf);
+    }
+    */
 }
 
 void reset_menu(){

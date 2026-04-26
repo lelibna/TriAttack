@@ -24,10 +24,10 @@ void showHealthBar(HealthState *health){
     digitalWrite(health->latchPin, HIGH);
 }
 
-void updateHealth(HealthState *health, GameState *state){
+void updateHealth(HealthState *health){
     health->hp--;
     showHealthBar(health);
-    if(health->hp <= 0) *state = GS_GAMEOVER;
+    if(health->hp <= 0) setState(GS_GAMEOVER);
 }
 
 void clearHealthBar(HealthState *health) {

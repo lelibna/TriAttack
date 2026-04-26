@@ -12,11 +12,14 @@
 #include "gameover.h"
 #include "menu.h"
 #include "credits.h"
+#include "playerselect.h"
+#include "highscores.h"
 
 static const StateHandler stateHandlers[] = {
   { GS_TITLESCREEN, titlescreen_update, titlescreen_draw },
   { GS_MENU,        menu_update,        menu_draw        },
-  //{ GS_HIGHSCORES,  highscores_update,  highscores_draw  },
+  { GS_PLAYERSELECT,playerselect_update, playerselect_draw},
+  { GS_HIGHSCORES,  highscores_update,  highscores_draw  },
   { GS_PLAYING,     playing_update,     playing_draw     },
   { GS_GAMEOVER,    gameover_update,    gameover_draw    },
   { GS_CREDITS,     credits_update,     credits_draw}
@@ -25,6 +28,8 @@ static const StateHandler stateHandlers[] = {
 static GameState state = GS_TITLESCREEN;
 
 static unsigned long stateEntryTime = 0;
+
+static int lastScore;
 
 const int numStates = sizeof(stateHandlers) / sizeof(stateHandlers[0]);
 
@@ -53,7 +58,6 @@ static TimerState timers;
 static PlayerState player;
 static SoundState sound;
 static ScoreState score;
-
 
 int readADC() {
   return analogRead(POTENTIOMETER);
@@ -95,16 +99,27 @@ void initTimers(TimerState *timers) {
 
 void setState(GameState newState){
   stateEntryTime = millis();
-  if(newState == GS_PLAYING){
-    initBullets(&bullets);
-    initEnemies(&enemies);
-    initTimers(&timers);
-    initPlayer(&player);
-    initSound(&sound, BUZZER);
-    health.hp = health.maxHp;
-    showHealthBar(&health);
-    startGameTimer(&timers);
-    timers.nextSpawnDelay = getRanDelay(&timers);  
+
+  switch(newState){
+    case GS_PLAYING:
+      initBullets(&bullets);
+      initEnemies(&enemies);
+      initTimers(&timers);
+      initPlayer(&player);
+      initSound(&sound, BUZZER);
+      initScore(&score);
+      health.hp = health.maxHp;
+      showHealthBar(&health);
+      startGameTimer(&timers);
+      timers.nextSpawnDelay = getRanDelay(&timers);
+      break;
+    case GS_GAMEOVER:
+      saveHighscore(getActiveProfile(), score.score);
+      lastScore = score.score;
+      score.score = 0;
+      break;
+    default:
+      break;
   }
   state = newState;
 }
@@ -144,6 +159,10 @@ void playing_draw() {
   showHealthBar(&health);
 }
 
+int getLastScore(){
+  return lastScore;
+}
+
 
 void setup() {
   Serial.begin(115200);
@@ -157,6 +176,7 @@ void setup() {
   digitalWrite(health.clockPin, LOW);
   digitalWrite(health.latchPin, LOW);
   clearHealthBar(&health);
+  loadHighscores();
 
   randomSeed(analogRead(POTENTIOMETER));
 

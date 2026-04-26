@@ -12,5 +12,5 @@ void credits_draw(){
     u8g2.setFont(u8g2_font_ncenB08_tr);
     u8g2.drawStr(40, 10, "Credits");
     u8g2.drawStr(10, 30, "Alles:  Lena");
-    u8g2.drawStr(10, 40, "Unterstüzung: Tobi");
+    u8g2.drawStr(10, 40, "Unterstuetzung: Tobi");
 }

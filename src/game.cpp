@@ -21,3 +21,7 @@ void checkElimination(BulletState *bullets, EnemyState *enemies, HealthState *he
     }
   }
 }
+
+void initScore(ScoreState *score){
+  score->score = 0;
+}

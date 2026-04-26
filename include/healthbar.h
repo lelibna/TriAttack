@@ -12,7 +12,7 @@ typedef struct HealthState{
 } HealthState;
 
 void showHealthBar(HealthState *health);
-void updateHealth(HealthState *health, GameState *state);
+void updateHealth(HealthState *health);
 void clearHealthBar(HealthState *health);
 
 #endif
