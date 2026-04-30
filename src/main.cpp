@@ -66,7 +66,7 @@ int readADC() {
 int getRanDelay(TimerState *timers) {
   float t = (millis() - timers->gameStartTime) / 1000.0; 
 
-  float baseDelay = 1500 * exp((-0.002)*t);
+  float baseDelay = 1100 * exp((-0.002)*t);
   float wave = 100.0 * sin(t * 0.1);
   int jitter = random(-50, 50);
 

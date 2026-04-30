@@ -24,8 +24,6 @@ void spawnEnemy(EnemyState *enemies, TimerState *timers) {
   }
 }
 
-
-
 void updateEnemies(EnemyState *enemies, HealthState *health, GameState *state) {
 
   for(int i = 0; i < MAX_ENEMIES; i++){

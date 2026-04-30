@@ -15,7 +15,7 @@ void gameover_draw() {
     u8g2.drawStr(25, 12, "GAME OVER");
 
     char buf[24];
-    snprintf(buf, sizeof(buf), "Score:     %d", getLastScore());
+    snprintf(buf, sizeof(buf), "Punkte:     %d", getLastScore());
     u8g2.drawStr(15, 30, buf);
 
     snprintf(buf, sizeof(buf), "Highscore: %d", getHighscore(getActiveProfile()));

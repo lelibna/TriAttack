@@ -44,7 +44,7 @@ void menu_draw() {
 
     u8g2.drawStr(20, 15, "MENU");
 
-    u8g2.drawStr(10, 32, currentItem == M_PLAY ? "> Play" : "  Play");
+    u8g2.drawStr(10, 32, currentItem == M_PLAY ? "> Spielen" : "  Spielen");
     u8g2.drawStr(10, 44, currentItem == M_HIGHSCORES ? "> Highscores" : "  Highscores");
     u8g2.drawStr(10, 56, currentItem == M_CREDITS ? "> Credits" : "  Credits");
     /* TODO ZUR FOR SCHLEIFE ÄNDERN

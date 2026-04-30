@@ -1,9 +1,68 @@
 #include "titlescreen.h"
+#include "tones.h"
 #include "main.h"
 
+static int melodyIndex = 0;
+static unsigned long melodyNextTime = 0;
+
+
+int melody[] = {
+	NOTE_FS4, NOTE_A4,  NOTE_CS5, NOTE_A4,
+	NOTE_E5,  NOTE_CS5, NOTE_A4,  NOTE_FS4,
+
+	NOTE_GS4, NOTE_B4,  NOTE_DS5, NOTE_B4,
+	NOTE_FS5, NOTE_DS5, NOTE_B4,  NOTE_GS4,
+
+	NOTE_A4,  NOTE_CS5, NOTE_E5,  NOTE_CS5,
+	NOTE_A5,  NOTE_E5,  NOTE_CS5, NOTE_A4,
+
+	NOTE_B4,  NOTE_DS5, NOTE_FS5, NOTE_DS5,
+	NOTE_B5,  NOTE_FS5, NOTE_DS5, NOTE_B4,
+
+	NOTE_CS5, NOTE_E5,  NOTE_GS5, NOTE_E5,
+	NOTE_CS6, NOTE_GS5, NOTE_E5,  NOTE_CS5,
+
+	NOTE_A4,  NOTE_CS5, NOTE_E5,  NOTE_FS5,
+	NOTE_E5,  NOTE_CS5, NOTE_A4,  NOTE_FS4
+};
+
+int durations[] = {
+	8,8,8,8,
+	8,8,8,8,
+
+	8,8,8,8,
+	8,8,8,8,
+
+	8,8,8,8,
+	8,8,8,8,
+
+	8,8,8,8,
+	8,8,8,8,
+
+	8,8,8,8,
+	8,8,8,8,
+
+	8,8,8,8,
+	8,8,8,4
+};
+
 void titlescreen_update(){
+	unsigned long now = millis();
+	int size = sizeof(melody)/sizeof(int);
+	if (melodyIndex < size) {
+		if (now >= melodyNextTime) {
+			int duration = 1000 / durations[melodyIndex];
+			tone(BUZZER, melody[melodyIndex], duration);
+			melodyNextTime = now + (unsigned long)(duration * 1.35);
+			melodyIndex++;
+		}
+	} else {
+			noTone(BUZZER);
+	}
 	if (isButtonBlocked()) return;
     if(digitalRead(BUTTON) == LOW){
+		melodyIndex = 0;
+		melodyNextTime = 0;
         setState(GS_MENU);
     }
 }
@@ -290,3 +349,4 @@ void titlescreen_draw(){
     }
     u8g2.drawXBMP(0,0,SCREEN_WIDTH, SCREEN_HEIGHT, bitmap_allArray[currentFrame]);
 }
+
