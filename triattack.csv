@@ -1,0 +1,17 @@
+"ID";"Bezeichner";"Footprint";"Stückzahl";"Bezeichnung";"Anbieter und Referenz";
+1;"BZ1";"Buzzer_12x9.5RM7.6";1;"Buzzer";;;
+2;"C2,C3,C1";"C_0805_2012Metric_Pad1.18x1.45mm_HandSolder";3;"100nF";;;
+3;"C5";"CP_Radial_D6.3mm_P2.50mm";1;"100µF";;;
+4;"D1";"LED_D5.0mm";1;"LED";;;
+5;"R12";"R_0805_2012Metric_Pad1.20x1.40mm_HandSolder";1;"110";;;
+6;"R9,R3,R1,R4,R7,R10,R8,R2,R11,R6,R5";"R_0805_2012Metric_Pad1.20x1.40mm_HandSolder";11;"330";;;
+7;"J2";"TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal";1;"Conn_01x02_Socket";;;
+8;"U1";"ESP32-C3-DevKitM-1";1;"ESP32-C3-DevKitM-1";;;
+9;"C4";"CP_Radial_D5.0mm_P2.00mm";1;"10µF";;;
+10;"J1";"PinHeader_1x07_P2.54mm_Vertical_OLEDver";1;"Conn_01x07";;;
+11;"SW1";"SW_PUSH-12mm";1;"SW_Push";;;
+12;"U3,U2";"DIP-16_W7.62mm";2;"74HC595";;;
+13;"SW2";"SW_Slide_SPDT_Angled_CK_OS102011MA1Q";1;"SW_SPDT";;;
+14;"BAR1";"HDSP-4832";1;"HDSP-4832_2";;;
+15;"RV1";"Alpha RV16AF-41-15R1-B10K";1;"R_Potentiometer";;;
+16;"Q1";"TO-92_Inline";1;"S8050";;;
